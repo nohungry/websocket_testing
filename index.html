@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Client</title>
+</head>
+<body>
+
+<button id="sendBtn">Send Message</button>
+<button id="clearBtn">Clear Messages</button>
+<div id="output"></div>
+
+<script>
+    const output = document.getElementById('output');
+    const ws = new WebSocket('ws://websocket.local:4000');
+
+    ws.onopen = function() {
+        output.innerHTML += '<p>Connected to the server</p>';
+    };
+
+    ws.onmessage = function(event) {
+        output.innerHTML += `<p>Received: ${event.data}</p>`;
+    };
+
+    // 監聽ping和pong事件
+    ws.addEventListener('ping', (event) => {
+        output.innerHTML += '<p>Received PING from server</p>';
+    });
+
+    ws.addEventListener('pong', (event) => {
+        output.innerHTML += '<p>Received PONG from server</p>';
+    });
+
+    document.getElementById('sendBtn').addEventListener('click', function() {
+		const currentTime = new Date().toISOString();
+        ws.send('Hello server!, Sent at: ${currentTime}');
+        output.innerHTML += '<p>Sent: Hello server! at ${currentTime}</p>';
+    });
+	
+	// 清空訊息的功能
+    document.getElementById('clearBtn').addEventListener('click', function() {
+        output.innerHTML = '';
+    });
+</script>
+</body>
+</html>
